@@ -1,0 +1,47 @@
+---
+- name: Install docker's dependencies
+  apt:
+    name: "{{ packages }}"
+    cache_valid_time: 3600
+    force_apt_get: yes
+  vars:
+    packages:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg2
+    - software-properties-common
+
+- name: Add docker's GPG key
+  apt_key:
+    url: https://download.docker.com/linux/debian/gpg
+    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+
+- name: Add docker's repository
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/debian buster stable
+    update_cache: yes
+    filename: docker-stable
+
+- name: Install docker-ce docker-ce-cli and containerd.io
+  apt:
+    name: "{{ packages }}"
+    cache_valid_time: 3600
+    force_apt_get: yes
+  vars:
+    packages:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+
+- name: Install pip
+  apt: 
+    name: python-pip
+    cache_valid_time: 3600
+    force_apt_get: yes
+
+- name: install docker package
+  pip: name=docker
+
+- name: run workaround for ssl_match_hostname, i don't know?????
+  command: cp -r /usr/local/lib/python2.7/dist-packages/backports/ssl_match_hostname/ /usr/lib/python2.7/dist-packages/backports
